@@ -84,6 +84,7 @@ kubernetes-security-hardening-lab/
 │  ├─ 05-admission.md
 │  ├─ troubleshooting.md
 │  └─ evidences/
+│     └─ screenshots/
 ├─ README.md
 ├─ LICENSE
 └─ .gitignore
@@ -172,6 +173,111 @@ Adicionar prints e saídas de comando em `docs/evidences/`:
 - saída de `kubectl auth can-i`
 - teste de NetworkPolicy permitido e bloqueado
 - pipeline do GitHub Actions passando
+
+### 9.1 Índice remissivo das evidências
+<a id="indice-remissivo"></a>
+
+1. [01 - Estado dos nós (`kubectl get nodes`)](#ev-01)
+2. [02 - Estado dos pods (`kubectl get pods -A`)](#ev-02)
+3. [03 - RBAC permitido (`can-i list pods`)](#ev-03)
+4. [04 - RBAC negado (`can-i delete pods`)](#ev-04)
+5. [05 - Security Context (`GET /security`)](#ev-05)
+6. [06 - Teste de escrita (`GET /write-test`)](#ev-06)
+7. [07 - NetworkPolicy permitido (frontend allowed)](#ev-07)
+8. [08 - NetworkPolicy bloqueado (frontend denied)](#ev-08)
+9. [09 - NetworkPolicy permitido (observability allowed)](#ev-09)
+10. [10 - Admissão bloqueando pod inseguro (`dry-run=server`)](#ev-10)
+11. [11 - GitHub Actions workflow aprovado](#ev-11)
+
+### 9.2 Evidências anexadas
+
+<a id="ev-01"></a>
+#### 01 - Estado dos nós (`kubectl get nodes`)
+Contexto: validação inicial do cluster Kind com Calico (Seção 6 e Seção 7).
+
+![01 - kubectl get nodes](docs/evidences/screenshots/01-kubectl-get-nodes.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-02"></a>
+#### 02 - Estado dos pods (`kubectl get pods -A`)
+Contexto: verificação de saúde dos workloads de sistema e do laboratório.
+
+![02 - kubectl get pods -A](docs/evidences/screenshots/02-kubectl-get-pods-all.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-03"></a>
+#### 03 - RBAC permitido (`can-i list pods`)
+Contexto: demonstração de autorização mínima para `pod-reader-sa` (Seção 8 > RBAC).
+
+![03 - can-i list pods](docs/evidences/screenshots/03-kubectl-auth-can-i-list-pods-yes.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-04"></a>
+#### 04 - RBAC negado (`can-i delete pods`)
+Contexto: demonstração de operação bloqueada por menor privilégio.
+
+![04 - can-i delete pods](docs/evidences/screenshots/04-kubectl-auth-can-i-delete-pods-no.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-05"></a>
+#### 05 - Security Context (`GET /security`)
+Contexto: prova de execução não-root, GID, capabilities e token de ServiceAccount desabilitado (Seção 8 > Security Context).
+
+![05 - endpoint security](docs/evidences/screenshots/05-endpoint-security.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-06"></a>
+#### 06 - Teste de escrita (`GET /write-test`)
+Contexto: validação de `readOnlyRootFilesystem` com escrita permitida em `/data` e `/tmp`, e bloqueada em `/app`.
+
+![06 - endpoint write-test](docs/evidences/screenshots/06-endpoint-write-test.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-07"></a>
+#### 07 - NetworkPolicy permitido (frontend allowed)
+Contexto: pod permitido (`access=allowed`) acessa o backend com sucesso (Seção 8 > NetworkPolicy).
+
+![07 - networkpolicy frontend allowed](docs/evidences/screenshots/07-networkpolicy-frontend-allowed.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-08"></a>
+#### 08 - NetworkPolicy bloqueado (frontend denied)
+Contexto: pod negado (`access=denied`) recebe timeout por política de rede.
+
+![08 - networkpolicy frontend denied](docs/evidences/screenshots/08-networkpolicy-frontend-denied.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-09"></a>
+#### 09 - NetworkPolicy permitido (observability allowed)
+Contexto: namespace de observabilidade autorizado a consultar o backend.
+
+![09 - networkpolicy observability allowed](docs/evidences/screenshots/09-networkpolicy-observability-allowed.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-10"></a>
+#### 10 - Admissão bloqueando pod inseguro (`dry-run=server`)
+Contexto: Pod Security Admission `restricted` bloqueando workload inseguro antes da persistência (Seção 8 > Admission).
+
+![10 - admission restricted deny](docs/evidences/screenshots/10-admission-dry-run-violates-restricted.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
+
+<a id="ev-11"></a>
+#### 11 - GitHub Actions workflow aprovado
+Contexto: validação de qualidade dos manifests (`yamllint`, `kubeconform`, `trivy config`) em pipeline CI.
+
+![11 - github actions validate passed](docs/evidences/screenshots/11-github-actions-validate-passed.png)
+
+[Voltar ao índice remissivo](#indice-remissivo)
 
 ## 10. Boas práticas demonstradas
 - Princípio do menor privilégio em RBAC.
