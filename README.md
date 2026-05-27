@@ -73,7 +73,9 @@ kubernetes-security-hardening-lab/
 │  ├─ check.sh
 │  ├─ check-network-policy.sh
 │  ├─ cleanup.ps1
-│  └─ cleanup.sh
+│  ├─ cleanup.sh
+│  ├─ publish-github.ps1
+│  └─ publish-github.sh
 ├─ docs/
 │  ├─ 01-security-context.md
 │  ├─ 02-service-account.md
@@ -105,6 +107,9 @@ Pré-requisitos: Docker Desktop, kind e kubectl instalados.
 
 # 5) Limpar manifests e cluster (com confirmação)
 .\scripts\cleanup.ps1 -DeleteCluster
+
+# 6) Publicar automaticamente no GitHub e acompanhar workflow
+.\scripts\publish-github.ps1 -OpenRepoPage
 ```
 
 ## 7. Como executar no WSL2/Linux
@@ -128,6 +133,9 @@ bash scripts/cleanup.sh --manifests-only
 
 # 5) Limpar manifests e cluster (com confirmação)
 bash scripts/cleanup.sh --delete-cluster
+
+# 6) Publicar automaticamente no GitHub e acompanhar workflow
+bash scripts/publish-github.sh
 ```
 
 ## 8. Demonstrações práticas
