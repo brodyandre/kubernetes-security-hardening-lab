@@ -4,6 +4,20 @@
 
 Laboratório prático de segurança em Kubernetes, desenhado para demonstrar capacidade técnica aplicada em ambientes Cloud Native com foco em empregabilidade para funções de DevOps, Engenharia de Dados e Plataforma.
 
+## Navegação rápida
+1. [Visão geral](#1-visão-geral)
+2. [Objetivos do projeto](#2-objetivos-do-projeto)
+3. [Arquitetura do laboratório](#3-arquitetura-do-laboratório)
+4. [Tecnologias utilizadas](#4-tecnologias-utilizadas)
+5. [Estrutura do repositório](#5-estrutura-do-repositório)
+6. [Execução Windows 11](#6-como-executar-no-windows-11)
+7. [Execução WSL2/Linux](#7-como-executar-no-wsl2linux)
+8. [Demonstrações práticas](#8-demonstrações-práticas)
+9. [Evidências com prints](#9-evidências-esperadas)
+10. [Boas práticas](#10-boas-práticas-demonstradas)
+11. [Pontos de atenção](#11-pontos-de-atenção)
+12. [Autor](#12-autor)
+
 ## 1. Visão geral
 Este projeto implementa, de ponta a ponta, controles essenciais de segurança para workloads Kubernetes:
 - hardening de containers com `SecurityContext`
@@ -14,6 +28,16 @@ Este projeto implementa, de ponta a ponta, controles essenciais de segurança pa
 - validação contínua de manifests em `GitHub Actions`
 
 Objetivo central: transformar conceitos de segurança em evidências técnicas reproduzíveis localmente.
+
+### Resumo executivo
+| Dimensão | Implementação no laboratório | Evidência prática |
+|---|---|---|
+| Hardening de container | `runAsNonRoot`, `readOnlyRootFilesystem`, `drop: ALL`, `seccomp` | Prints 05 e 06 |
+| Identidade de workload | ServiceAccounts dedicadas com automount controlado | Prints 03, 04 e 05 |
+| Autorização | Roles e bindings com menor privilégio | Prints 03 e 04 |
+| Segmentação de rede | `default deny` + regras por namespace/pod | Prints 07, 08 e 09 |
+| Admissão preventiva | Pod Security Admission `restricted` | Print 10 |
+| Qualidade contínua | `yamllint`, `kubeconform`, `trivy` no GitHub Actions | Print 11 |
 
 ## 2. Objetivos do projeto
 - Executar containers com usuário não-root.
@@ -136,6 +160,15 @@ bash scripts/publish-github.sh
 ```
 
 ## 8. Demonstrações práticas
+### Mapa dos cenários
+| Cenário | Arquivos principais | Resultado esperado |
+|---|---|---|
+| Security Context | `manifests/01-security-context/*`, `app/main.py` | Processo não-root, capabilities reduzidas, escrita bloqueada em `/app` |
+| ServiceAccount | `manifests/02-service-account/*` | Token não montado onde não é necessário |
+| RBAC | `manifests/03-rbac/*` | Leitura permitida e operações destrutivas negadas |
+| NetworkPolicy | `manifests/05-network-policy/*` | Fluxo permitido/bloqueado conforme labels e namespace |
+| Admission | `manifests/06-admission/*` | Workload inseguro rejeitado antes de executar |
+
 ### Security Context
 - Execução não-root (`UID/GID` dedicados).
 - Redução de capabilities (`drop: ALL`).
@@ -165,17 +198,19 @@ As evidências abaixo comprovam o comportamento técnico dos controles de segura
 ### 9.1 Índice remissivo
 <a id="indice-remissivo"></a>
 
-1. [01 - Estado dos nós (`kubectl get nodes`)](#ev-01)
-2. [02 - Estado dos pods (`kubectl get pods -A`)](#ev-02)
-3. [03 - RBAC permitido (`can-i list pods`)](#ev-03)
-4. [04 - RBAC negado (`can-i delete pods`)](#ev-04)
-5. [05 - Security Context (`GET /security`)](#ev-05)
-6. [06 - Teste de escrita (`GET /write-test`)](#ev-06)
-7. [07 - NetworkPolicy permitido (frontend allowed)](#ev-07)
-8. [08 - NetworkPolicy bloqueado (frontend denied)](#ev-08)
-9. [09 - NetworkPolicy permitido (observability allowed)](#ev-09)
-10. [10 - Admissão bloqueando pod inseguro (`dry-run=server`)](#ev-10)
-11. [11 - GitHub Actions workflow aprovado](#ev-11)
+| ID | Evidência | Arquivo | Link |
+|---|---|---|---|
+| 01 | Estado dos nós (`kubectl get nodes`) | `01-kubectl-get-nodes.png` | [Abrir seção](#ev-01) |
+| 02 | Estado dos pods (`kubectl get pods -A`) | `02-kubectl-get-pods-all.png` | [Abrir seção](#ev-02) |
+| 03 | RBAC permitido (`can-i list pods`) | `03-kubectl-auth-can-i-list-pods-yes.png` | [Abrir seção](#ev-03) |
+| 04 | RBAC negado (`can-i delete pods`) | `04-kubectl-auth-can-i-delete-pods-no.png` | [Abrir seção](#ev-04) |
+| 05 | Security Context (`GET /security`) | `05-endpoint-security.png` | [Abrir seção](#ev-05) |
+| 06 | Teste de escrita (`GET /write-test`) | `06-endpoint-write-test.png` | [Abrir seção](#ev-06) |
+| 07 | NetworkPolicy permitido (frontend allowed) | `07-networkpolicy-frontend-allowed.png` | [Abrir seção](#ev-07) |
+| 08 | NetworkPolicy bloqueado (frontend denied) | `08-networkpolicy-frontend-denied.png` | [Abrir seção](#ev-08) |
+| 09 | NetworkPolicy permitido (observability allowed) | `09-networkpolicy-observability-allowed.png` | [Abrir seção](#ev-09) |
+| 10 | Admissão bloqueando pod inseguro (`dry-run=server`) | `10-admission-dry-run-violates-restricted.png` | [Abrir seção](#ev-10) |
+| 11 | GitHub Actions workflow aprovado | `11-github-actions-validate-passed.png` | [Abrir seção](#ev-11) |
 
 ### 9.2 Evidências anexadas
 
