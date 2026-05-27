@@ -47,7 +47,7 @@ jobs:
           curl -sSL "https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz" \
             | tar -xz kubeconform
           sudo mv kubeconform /usr/local/bin/kubeconform
-          kubeconform -version
+          kubeconform -v
 
       - name: Validate Kubernetes manifests
         shell: bash
@@ -76,4 +76,8 @@ jobs:
             --skip-files manifests/01-security-context/pod-insecure-example.yaml \
             --skip-files manifests/03-rbac/admin-clusterrolebinding-demo.yaml \
             --skip-files manifests/06-admission/pod-violates-restricted.yaml \
-            manifests app
+            manifests
+          docker run --rm -v "${PWD}:/repo" -w /repo aquasec/trivy:0.56.2 config \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            app

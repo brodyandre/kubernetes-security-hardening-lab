@@ -14,9 +14,7 @@ spec:
         - namespaceSelector:
             matchLabels:
               name: security-observability
+      # Permite por namespace: todos os pods de security-observability.
       ports:
         - protocol: TCP
           port: 8080
-      # Diferenca didatica:
-      # - aqui permitimos por namespace (todos os pods do namespace alvo),
-      #   sem filtrar por label de pod.
