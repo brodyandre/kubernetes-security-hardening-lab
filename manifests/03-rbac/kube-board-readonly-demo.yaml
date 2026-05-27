@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-board-sa
+  namespace: k8s-security-lab
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kube-board-readonly-role
+  namespace: k8s-security-lab
+rules:
+  # Role (namespace-scoped) para uma ferramenta de visualizacao somente leitura.
+  # Principio do menor privilegio: sem create/update/patch/delete.
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kube-board-readonly-binding
+  namespace: k8s-security-lab
+subjects:
+  - kind: ServiceAccount
+    name: kube-board-sa
+    namespace: k8s-security-lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kube-board-readonly-role
+# Diferenca essencial:
+# - RoleBinding limita o escopo ao namespace.
+# - ClusterRoleBinding concederia escopo cluster-wide (mais arriscado).

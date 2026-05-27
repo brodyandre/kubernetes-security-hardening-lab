@@ -1,0 +1,12 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: k8s-security-lab
+networking:
+  # Necessario para usar Calico como CNI no lugar do kindnet.
+  disableDefaultCNI: true
+  # CIDR recomendado no guia oficial do Calico para kind.
+  podSubnet: 192.168.0.0/16
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker

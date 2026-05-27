@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-restricted-role
+  namespace: k8s-security-lab
+rules:
+  # Menor privilegio: apenas consulta de pods e services.
+  # Nao inclui create/update/patch/delete.
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list"]

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # Namespace controlado para demonstrar cenarios inseguros.
+  name: security-insecure-demo
+  labels:
+    name: security-insecure-demo
+    # Enforce em baseline para permitir alguns exemplos inseguros didaticos.
+    pod-security.kubernetes.io/enforce: baseline
+    # Audit/Warn em restricted para evidenciar riscos no admission report.
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

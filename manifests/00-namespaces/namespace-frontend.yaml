@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security-frontend
+  labels:
+    # Label simples para selecao em NetworkPolicy por namespace.
+    name: security-frontend
+    # Zona logica da aplicacao (camada frontend).
+    security-zone: frontend

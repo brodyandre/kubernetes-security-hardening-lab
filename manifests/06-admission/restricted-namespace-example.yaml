@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: restricted-lab
+  labels:
+    # Pod Security Admission em modo restrito:
+    # tudo que violar o baseline "restricted" deve ser bloqueado na admissao.
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

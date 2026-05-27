@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # Namespace principal do laboratorio de seguranca.
+  name: k8s-security-lab
+  labels:
+    # Perfil mais restritivo para workloads do laboratorio.
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

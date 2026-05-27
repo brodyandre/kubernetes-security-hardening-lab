@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: demo-cluster-admin-binding
+  annotations:
+    lab.kubernetes.io/demo-only: "true"
+    lab.kubernetes.io/do-not-apply-in-default-flow: "true"
+subjects:
+  - kind: ServiceAccount
+    name: app-restricted-sa
+    namespace: k8s-security-lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+# NAO RECOMENDADO para producao:
+# - ClusterRole tem escopo potencialmente global.
+# - ClusterRoleBinding aplica permissao em todo o cluster.
+# Este manifesto existe apenas para demonstrar o risco de permissoes amplas.

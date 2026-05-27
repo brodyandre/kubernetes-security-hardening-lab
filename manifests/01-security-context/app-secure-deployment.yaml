@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-lab-app
+  namespace: k8s-security-lab
+  labels:
+    app: security-lab-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-lab-app
+  template:
+    metadata:
+      labels:
+        app: security-lab-app
+    spec:
+      # ServiceAccount dedicada para identidade de workload.
+      serviceAccountName: app-secure-sa
+      # Desabilita automount de token por principio de menor privilegio.
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 30001
+        fsGroup: 30001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          image: brodyandre/kubernetes-security-hardening-lab:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          securityContext:
+            # Impede elevacao de privilegio via setuid/setgid.
+            allowPrivilegeEscalation: false
+            # Forca filesystem raiz somente leitura (/app deve falhar no write-test).
+            readOnlyRootFilesystem: true
+            capabilities:
+              # Remove todas as capabilities Linux do container.
+              drop:
+                - ALL
+          volumeMounts:
+            # Volume controlado para escrita de dados de app.
+            - name: data-volume
+              mountPath: /data
+            # Volume temporario para escrita em runtime.
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}

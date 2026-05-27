@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend-api
+  namespace: security-backend
+spec:
+  podSelector:
+    matchLabels:
+      app: backend-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            # namespaceSelector filtra namespaces por labels.
+            matchLabels:
+              name: security-frontend
+          podSelector:
+            # podSelector + namespaceSelector no mesmo item = AND logico.
+            # Apenas pods access=allowed do namespace frontend podem entrar.
+            matchLabels:
+              access: allowed
+      ports:
+        - protocol: TCP
+          port: 8080

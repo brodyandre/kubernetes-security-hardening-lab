@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-insecure-example
+  namespace: security-insecure-demo
+  labels:
+    app: pod-insecure-example
+spec:
+  # EXEMPLO NEGATIVO (didatico): este Pod demonstra anti-patterns de seguranca.
+  # Nao aplicar em ambientes reais.
+  containers:
+    - name: insecure-app
+      image: busybox:1.36
+      command: ["sh", "-c", "echo insecure-example && sleep 3600"]
+      securityContext:
+        # Roda como root (alto risco).
+        runAsUser: 0
+        # Permite elevacao de privilegio (alto risco).
+        allowPrivilegeEscalation: true
+        # Sem readOnlyRootFilesystem e sem drop de capabilities: exemplo inseguro.

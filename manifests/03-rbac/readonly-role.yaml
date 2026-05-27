@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader-role
+  namespace: k8s-security-lab
+rules:
+  # Role e sempre namespace-scoped (escopo local).
+  # Menor privilegio: apenas leitura de Pods.
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]

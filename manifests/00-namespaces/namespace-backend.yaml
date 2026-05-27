@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security-backend
+  labels:
+    # Label simples para selecao em NetworkPolicy por namespace.
+    name: security-backend
+    # Zona logica da aplicacao (camada backend).
+    security-zone: backend

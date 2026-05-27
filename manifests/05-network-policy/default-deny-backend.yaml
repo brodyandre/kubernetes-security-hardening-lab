@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-backend
+  namespace: security-backend
+spec:
+  # podSelector define quais pods esta policy protege.
+  # Aqui, isolamos apenas os pods do backend-api.
+  podSelector:
+    matchLabels:
+      app: backend-api
+  policyTypes:
+    - Ingress
+  # Sem regras de ingress => politica default deny para os pods selecionados.
+  ingress: []

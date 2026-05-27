@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: violates-restricted
+  namespace: restricted-lab
+  annotations:
+    lab.kubernetes.io/demo-only: "true"
+spec:
+  # EXEMPLO NEGATIVO:
+  # Este pod deve falhar quando enviado para namespace com PSA restricted.
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+      securityContext:
+        # Violacoes didaticas solicitadas:
+        privileged: true
+        runAsUser: 0
+        allowPrivilegeEscalation: true
+      ports:
+        - containerPort: 80

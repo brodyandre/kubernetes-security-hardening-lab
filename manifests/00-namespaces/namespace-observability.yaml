@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security-observability
+  labels:
+    # Label simples para selecao em NetworkPolicy por namespace.
+    name: security-observability
+    # Zona logica para stack de observabilidade.
+    security-zone: observability

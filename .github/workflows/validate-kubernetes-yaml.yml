@@ -1,0 +1,79 @@
+name: Validate Kubernetes YAML
+
+on:
+  # Executa em qualquer push para manter feedback continuo.
+  push:
+  # Executa em pull_request para validar antes de merge.
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  yamllint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install yamllint
+        run: pip install --no-cache-dir yamllint
+
+      - name: Lint YAML files
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Regras simples para manter legibilidade sem bloquear estilo didatico.
+          yamllint -d "{extends: default, rules: {document-start: disable, truthy: disable, line-length: {max: 180}}}" \
+            manifests kind app .github/workflows
+
+  kubeconform:
+    name: Kubernetes Schema Validation (kubeconform)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubeconform
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sSL "https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz" \
+            | tar -xz kubeconform
+          sudo mv kubeconform /usr/local/bin/kubeconform
+          kubeconform -version
+
+      - name: Validate Kubernetes manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Valida apenas manifests Kubernetes (exclui arquivos de workflow e scripts).
+          mapfile -t files < <(find manifests app -type f \( -name "*.yaml" -o -name "*.yml" \))
+          kubeconform -summary -strict -ignore-missing-schemas "${files[@]}"
+
+  trivy-config:
+    name: IaC Security Scan (Trivy config)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy config scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Excecoes explicitas para arquivos didaticos intencionalmente inseguros.
+          # O restante do repositorio continua bloqueando findings relevantes.
+          docker run --rm -v "${PWD}:/repo" -w /repo aquasec/trivy:0.56.2 config \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            --skip-files manifests/01-security-context/pod-insecure-example.yaml \
+            --skip-files manifests/03-rbac/admin-clusterrolebinding-demo.yaml \
+            --skip-files manifests/06-admission/pod-violates-restricted.yaml \
+            manifests app

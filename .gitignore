@@ -1,0 +1,33 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python/tooling
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Logs e artefatos temporarios
+*.log
+*.tmp
+*.bak
+
+# Credenciais e variaveis locais
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*kubeconfig*
+
+# Evidencias locais pesadas
+docs/evidences/*.mp4
+docs/evidences/*.mov
